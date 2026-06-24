@@ -47,9 +47,14 @@ jobs:
       run:
         working-directory: backend
     concurrency: deploy-prod
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+      # Steps below skip cleanly until you add the FLY_API_TOKEN repo secret,
+      # so the workflow stays green before deployment is wired up.
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        if: ${{ env.FLY_API_TOKEN != '' }}
+      - name: Deploy to Fly.io
+        if: ${{ env.FLY_API_TOKEN != '' }}
+        run: flyctl deploy --remote-only
