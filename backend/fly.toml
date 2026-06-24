@@ -1,0 +1,31 @@
+# Fly.io config. Before first deploy:
+#   fly launch --no-deploy            # or `fly apps create <name>` and edit `app` below
+#   fly secrets set DATABASE_URL="postgresql+psycopg://...supabase pooler...:6543/postgres"
+#   fly secrets set SUPABASE_JWT_SECRET="..."  CORS_ORIGINS="https://your-frontend"
+# The Dockerfile CMD runs `alembic upgrade head && python -m app.seed` on boot.
+
+app = "ai-persona-game-api"      # <-- change to your unique Fly app name
+primary_region = "nrt"           # Tokyo; pick the region near your users
+
+[build]
+
+[env]
+  ENVIRONMENT = "production"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    method = "GET"
+    path = "/health"
+    interval = "15s"
+    timeout = "3s"
+    grace_period = "10s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

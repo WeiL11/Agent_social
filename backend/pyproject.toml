@@ -1,0 +1,16 @@
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = ["alembic/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["B008"]  # FastAPI uses function calls (Depends) in argument defaults
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]              # readable inline test payloads
+"app/services/svg.py" = ["E501"]  # SVG markup strings are inherently long
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
