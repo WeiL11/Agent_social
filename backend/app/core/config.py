@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     # Gameplay config defaults (also overridable via game_config table / live-ops).
     character_slot_cap: int = 3
     facet_weight_threshold: int = 30
+    owner_friend_cap: int = 100          # max accepted owner(user)-level friends
+    character_friend_daily_limit: int = 2  # new character-level friends per character per day
 
     @property
     def cors_origin_list(self) -> list[str]:

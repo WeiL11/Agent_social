@@ -58,6 +58,11 @@ export interface SelfExtractProfile {
   overall_summary?: string | null;
 }
 
+export interface CharacterFriendResult {
+  friend: Character;        // only the other creature is revealed (no owner info)
+  remaining_today: number;  // character-level befriend quota left today
+}
+
 export type FriendDirection = "incoming" | "outgoing" | "friends";
 export interface Friend {
   friendship_id: string;

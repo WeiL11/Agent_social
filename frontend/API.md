@@ -84,14 +84,25 @@ Base URL：`http://localhost:8000`（設在 `NEXT_PUBLIC_API_URL`）。
   判定純規則：隊伍各軸取最佳值 → 比對 `requirements.min` 門檻、`fail_above` 過高自動失敗、
   `synergy_traits` 命中加成、seed 控制隨機。同 seed 同結果（可重播）。
 
-### 好友
+### 好友（兩種層級）
+
+**A. 飼主好友（user ↔ user，一般加好友，上限 100）**
 - `POST /friends/requests`（auth）body `{ handle }` → `FriendOut`
 - `GET /friends`（auth）→ `FriendOut[]`
 - `POST /friends/requests/{friendship_id}/accept`（auth）→ `FriendOut`
 - `DELETE /friends/requests/{friendship_id}`（auth）→ `{deleted}`
+- `GET /friends/{friend_user_id}/characters`（auth）→ `CharacterOut[]`
+  ← 飼主好友福利：看到**那個人管理的全部小精靈**（非好友 → 403）
 
 **FriendOut**：`{ friendship_id, user_id, handle, status, direction }`
-direction：`incoming`（別人邀我）/ `outgoing`（我邀別人）/ `friends`（已成好友）。
+direction：`incoming` / `outgoing` / `friends`。超過 100 → 409。
+
+**B. 小精靈好友（character ↔ character，每隻每天限交 2 個）**
+- `POST /characters/{character_id}/friends`（auth）body `{ target_character_id }` → `CharacterFriendResult`
+  `{ friend: CharacterOut, remaining_today }`。超過每日上限 → **429**。
+- `GET /characters/{character_id}/friends`（auth）→ `CharacterOut[]`
+  ← **只露出另一隻小精靈**（看不到對方飼主或其 roster）
+- `DELETE /characters/{character_id}/friends/{other_character_id}`（auth）→ `{deleted}`
 
 ### 分享
 - `POST /characters/{id}/share`（auth）body `{ target }` → `ShareOut`

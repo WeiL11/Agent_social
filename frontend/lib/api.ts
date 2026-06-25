@@ -5,8 +5,8 @@
 // Auth: dev uses X-Dev-User; swap `authHeaders()` to Supabase Bearer in prod.
 
 import type {
-  Character, DispatchResult, Friend, GenerateResult, Scenario,
-  SelfExtractProfile, ShareResult, SharedCharacter,
+  Character, CharacterFriendResult, DispatchResult, Friend, GenerateResult,
+  Scenario, SelfExtractProfile, ShareResult, SharedCharacter,
 } from "./types";
 
 export const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -65,6 +65,19 @@ export const acceptFriend = (friendshipId: string) =>
   req<Friend>(`/friends/requests/${friendshipId}/accept`, { method: "POST" });
 export const removeFriend = (friendshipId: string) =>
   req<{ deleted: string }>(`/friends/requests/${friendshipId}`, { method: "DELETE" });
+// Owner-friend perk: see all characters a friend manages.
+export const friendCharacters = (friendUserId: string) =>
+  req<Character[]>(`/friends/${friendUserId}/characters`);
+
+// ---- character-level friends (creature <-> creature, 2/day) ----
+export const befriendCharacter = (characterId: string, targetCharacterId: string) =>
+  req<CharacterFriendResult>(`/characters/${characterId}/friends`, {
+    method: "POST", body: JSON.stringify({ target_character_id: targetCharacterId }),
+  });
+export const listCharacterFriends = (characterId: string) =>
+  req<Character[]>(`/characters/${characterId}/friends`);  // only the other creature
+export const unfriendCharacter = (characterId: string, otherCharacterId: string) =>
+  req<{ deleted: string }>(`/characters/${characterId}/friends/${otherCharacterId}`, { method: "DELETE" });
 
 // ---- sharing ----
 export const shareCharacter = (id: string, target: "public" | string) =>

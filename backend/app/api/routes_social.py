@@ -4,13 +4,16 @@ single row; direction is derived per viewer."""
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import or_, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.db import get_db
 from app.core.security import get_current_user
+from app.models.character import Character
 from app.models.social import Friendship
 from app.models.user import User
+from app.schemas.character import CharacterOut
 from app.schemas.social import FriendOut, FriendRequestIn
 
 router = APIRouter(prefix="/friends", tags=["friends"])
@@ -27,6 +30,20 @@ def _existing(db: Session, a: uuid.UUID, b: uuid.UUID) -> Friendship | None:
     )
 
 
+def _accepted_count(db: Session, user_id: uuid.UUID) -> int:
+    return db.scalar(
+        select(func.count()).select_from(Friendship).where(
+            Friendship.status == "accepted",
+            or_(Friendship.requester_id == user_id, Friendship.addressee_id == user_id),
+        )
+    ) or 0
+
+
+def _are_owner_friends(db: Session, a: uuid.UUID, b: uuid.UUID) -> bool:
+    fr = _existing(db, a, b)
+    return fr is not None and fr.status == "accepted"
+
+
 @router.post("/requests", response_model=FriendOut)
 def send_request(body: FriendRequestIn, db: Session = Depends(get_db),
                  user: User = Depends(get_current_user)):
@@ -37,6 +54,9 @@ def send_request(body: FriendRequestIn, db: Session = Depends(get_db),
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "cannot friend yourself")
     if _existing(db, user.id, target.id):
         raise HTTPException(status.HTTP_409_CONFLICT, "request already exists")
+    if _accepted_count(db, user.id) >= settings.owner_friend_cap:
+        raise HTTPException(status.HTTP_409_CONFLICT,
+                            f"owner friend limit reached ({settings.owner_friend_cap})")
     fr = Friendship(requester_id=user.id, addressee_id=target.id, status="pending")
     db.add(fr)
     db.commit()
@@ -75,6 +95,9 @@ def accept_request(friendship_id: uuid.UUID, db: Session = Depends(get_db),
     fr = db.get(Friendship, friendship_id)
     if fr is None or fr.addressee_id != user.id:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "request not found")
+    cap = settings.owner_friend_cap
+    if _accepted_count(db, user.id) >= cap or _accepted_count(db, fr.requester_id) >= cap:
+        raise HTTPException(status.HTTP_409_CONFLICT, f"owner friend limit reached ({cap})")
     fr.status = "accepted"
     db.commit()
     other = db.get(User, fr.requester_id)
@@ -91,3 +114,15 @@ def remove_or_decline(friendship_id: uuid.UUID, db: Session = Depends(get_db),
     db.delete(fr)
     db.commit()
     return {"deleted": str(friendship_id)}
+
+
+@router.get("/{friend_user_id}/characters", response_model=list[CharacterOut])
+def friend_characters(friend_user_id: uuid.UUID, db: Session = Depends(get_db),
+                      user: User = Depends(get_current_user)):
+    """Owner-friend perk: see all characters a friend manages (their roster)."""
+    if not _are_owner_friends(db, user.id, friend_user_id):
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "not an accepted friend")
+    rows = db.scalars(
+        select(Character).where(Character.owner_id == friend_user_id).order_by(Character.slot)
+    )
+    return [CharacterOut.model_validate(c) for c in rows]

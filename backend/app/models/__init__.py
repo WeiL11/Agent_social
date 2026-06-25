@@ -19,7 +19,7 @@ from app.models.community import (
 )
 from app.models.dispatch import Dispatch, Scenario
 from app.models.ingestion import Upload
-from app.models.social import CharacterShare, Friendship
+from app.models.social import CharacterFriendship, CharacterShare, Friendship
 from app.models.user import User
 
 __all__ = [
@@ -48,5 +48,6 @@ __all__ = [
     "ModerationItem",
     "GameConfig",
     "Friendship",
+    "CharacterFriendship",
     "CharacterShare",
 ]
