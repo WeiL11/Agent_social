@@ -14,8 +14,12 @@ class Scenario(Base, TimestampMixin):
     __tablename__ = "scenarios"
 
     id: Mapped[uuid.UUID] = uuidpk()
+    # stable slug for idempotent upsert + frontend asset mapping
+    key: Mapped[str | None] = mapped_column(String(48), unique=True, nullable=True)
     title: Mapped[str] = mapped_column(String(128))
     type: Mapped[str] = mapped_column(String(16), default="solo")  # solo/shared
+    # frontend art hint; the frontend owns the actual illustration
+    art: Mapped[str | None] = mapped_column(String(48), nullable=True)
     requirements: Mapped[dict] = mapped_column(JSONB, default=dict)
     rewards: Mapped[dict] = mapped_column(JSONB, default=dict)
     text_templates: Mapped[dict] = mapped_column(JSONB, default=dict)

@@ -1,0 +1,59 @@
+# ─────────────────────────────────────────────────────────────────────────
+# 任務內容檔（你直接編輯這個檔，我用載入器上架）
+#
+# 載入：`make load-scenarios`（或容器啟動時自動載入）。冪等——用 `key` 比對，
+# 重跑只會更新、不會重複。改完文案重跑即可。
+#
+# 每個任務的欄位：
+#   key:        穩定識別碼（英數+底線，別重複、別改）。前端也可用它對應插圖。
+#   title:      任務標題（顯示用，可隨時改）
+#   type:       solo（單人）/ shared（社群共享，之後用）
+#   art:        前端美術提示（前端用這個 key 決定要畫什麼，後端不存圖）
+#   requirements:
+#     min:          隊伍各軸要達到的門檻（軸：logic 邏輯 / creativity 創意 /
+#                   knowledge 知識 / curiosity 好奇心 / empathy 同理 /
+#                   humor 幽默 / grit 毅力 / structure 條理）。值 0–100。
+#     fail_above:   某軸「超過」此值反而自動失敗（製造取捨，可省略）
+#     synergy_traits: 隊伍若有這些特質 → 加成（可省略）
+#   rewards:
+#     xp:         成功給的經驗值
+#   text:
+#     success / fail: 敘事台詞，可用 {name} 代入出戰角色名字
+# ─────────────────────────────────────────────────────────────────────────
+
+scenarios:
+  - key: library_riddle
+    title: 圖書館的謎題
+    type: solo
+    art: library
+    requirements:
+      min: { logic: 55, knowledge: 50 }
+      fail_above: { humor: 95 }      # 太愛搞笑會靜不下心
+    rewards: { xp: 100 }
+    text:
+      success: "{name} 抽絲剝繭，解開了古老的索引謎題。"
+      fail: "{name} 被滿牆的書名繞暈了。"
+
+  - key: village_fair
+    title: 社區園遊會
+    type: solo
+    art: festival
+    requirements:
+      min: { empathy: 55, humor: 50 }
+      synergy_traits: [empathetic, playful]
+    rewards: { xp: 100 }
+    text:
+      success: "{name} 用笑容和耐心擺平了所有突發狀況。"
+      fail: "{name} 在人群裡有點手足無措。"
+
+  - key: midnight_debug
+    title: 深夜除錯大作戰
+    type: solo
+    art: terminal
+    requirements:
+      min: { logic: 70, grit: 60 }
+      synergy_traits: [systematic]
+    rewards: { xp: 150 }
+    text:
+      success: "{name} 一行行追下去，終於抓到那個藏很深的 bug！"
+      fail: "{name} 對著滿螢幕紅字陷入沉思……明天再戰。"

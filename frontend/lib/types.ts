@@ -81,8 +81,10 @@ export interface ShareResult {
 
 export interface Scenario {
   id: string;
+  key: string | null;   // stable slug — use to map your own quest illustration
   title: string;
-  type: string;       // "solo" | "shared"
+  type: string;         // "solo" | "shared"
+  art: string | null;   // art hint (e.g. "library"); frontend picks the actual image
   requirements: Record<string, any>;
   rewards: Record<string, any>;
 }

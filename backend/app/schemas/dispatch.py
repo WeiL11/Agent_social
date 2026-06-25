@@ -9,8 +9,10 @@ class ScenarioOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID
+    key: str | None
     title: str
     type: str
+    art: str | None          # frontend art hint (frontend picks the actual illustration)
     requirements: dict
     rewards: dict
 

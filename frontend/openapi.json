@@ -2220,6 +2220,17 @@
             "format": "uuid",
             "title": "Id"
           },
+          "key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key"
+          },
           "title": {
             "type": "string",
             "title": "Title"
@@ -2227,6 +2238,17 @@
           "type": {
             "type": "string",
             "title": "Type"
+          },
+          "art": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Art"
           },
           "requirements": {
             "additionalProperties": true,
@@ -2242,8 +2264,10 @@
         "type": "object",
         "required": [
           "id",
+          "key",
           "title",
           "type",
+          "art",
           "requirements",
           "rewards"
         ],

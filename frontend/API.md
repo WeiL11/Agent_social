@@ -71,7 +71,9 @@ Base URL：`http://localhost:8000`（設在 `NEXT_PUBLIC_API_URL`）。
 - `GET /render/characters/{id}/card.svg` → 合成角色卡（頭像+雷達+個資料）
 
 ### 派遣任務（#3，純規則判定）
-- `GET /scenarios`（auth）→ `Scenario[]`：`{ id, title, type, requirements, rewards }`
+- `GET /scenarios`（auth）→ `Scenario[]`：`{ id, key, title, type, art, requirements, rewards }`
+  - `art` 是美術提示（如 `"library"`）；**任務插圖由前端決定**，用 `art` 或 `key` 對應你的素材。
+  - 任務內容由後端 `content/scenarios.yaml` 維護（填表式上架），前端只消費。
 - `POST /dispatches`（auth）body `{ scenario_id, character_ids: string[], seed? }` → `DispatchResult`
   ```jsonc
   // DispatchResult
