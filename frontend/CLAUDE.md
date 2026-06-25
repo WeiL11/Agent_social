@@ -14,6 +14,14 @@ may rebuild the UI however you like. Follow these rules so the backend keeps wor
 4. The API contract is in **`API.md`** (human) and **`openapi.json`** (machine).
    Read those before adding features.
 
+## Direction: lean (see ../ARCHITECTURE.md)
+The plan is **Supabase for 80% (auth, CRUD, realtime chat, storage, admin) + a
+thin FastAPI for the 20% brain (persona extraction, generation, matchmaking,
+dispatch)**. Today everything goes through `lib/api.ts` → FastAPI; over time
+auth/CRUD/chat move to the Supabase client. Don't hand-build infra the platform
+gives for free. The FastAPI "smart" endpoints (/profiles, /matches, /dispatches,
+/render) stay.
+
 ## The backend (already built & running)
 - Base URL: `http://localhost:8000` (`NEXT_PUBLIC_API_URL`).
 - Auth (dev): header `X-Dev-User: <name>` — already handled in `lib/api.ts`.
