@@ -5,8 +5,9 @@
 // Auth: dev uses X-Dev-User; swap `authHeaders()` to Supabase Bearer in prod.
 
 import type {
-  Character, CharacterFriendResult, DispatchResult, Friend, GenerateResult,
-  Match, Me, Scenario, SelfExtractProfile, ShareResult, SharedCharacter, WaveResult,
+  Character, CharacterFriendResult, Conversation, DirectMessage, DispatchResult,
+  Friend, GenerateResult, Match, Me, Scenario, SelfExtractProfile, ShareResult,
+  SharedCharacter, WaveResult,
 } from "./types";
 
 export const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -67,6 +68,15 @@ export const wave = (theirCharacterId: string, fromCharacterId?: string) =>
 export const getMe = () => req<Me>("/me");
 export const setDiscoverable = (discoverable: boolean) =>
   req<Me>("/me", { method: "PUT", body: JSON.stringify({ discoverable }) });
+
+// ---- direct messages (owner-friends only) ----
+export const getConversations = () => req<Conversation[]>("/conversations");
+export const getMessages = (friendUserId: string) =>
+  req<DirectMessage[]>(`/friends/${friendUserId}/messages`);
+export const sendMessage = (friendUserId: string, body: string) =>
+  req<DirectMessage>(`/friends/${friendUserId}/messages`, {
+    method: "POST", body: JSON.stringify({ body }),
+  });
 
 // ---- friends ----
 export const listFriends = () => req<Friend[]>("/friends");

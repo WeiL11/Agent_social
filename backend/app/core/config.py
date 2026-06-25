@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     # Character flavor generation. "none" => deterministic templated stub.
     llm_provider: str = "none"
 
+    # Admin ops UI (sqladmin). CHANGE THESE IN PRODUCTION via env vars.
+    secret_key: str = "dev-secret-change-me"
+    admin_ui_password: str = "admin"
+
     # Gameplay config defaults (also overridable via game_config table / live-ops).
     character_slot_cap: int = 3
     facet_weight_threshold: int = 30

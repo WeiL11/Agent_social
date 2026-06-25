@@ -58,6 +58,22 @@ export interface SelfExtractProfile {
   overall_summary?: string | null;
 }
 
+export interface DirectMessage {
+  id: string;
+  from_me: boolean;
+  body: string;
+  created_at: string;
+  read: boolean;
+}
+
+export interface Conversation {
+  friend_user_id: string;
+  handle: string;
+  last_message: string | null;
+  last_at: string | null;
+  unread: number;
+}
+
 export interface Match {
   their_character: Character;  // persona shown; human identity hidden until mutual wave
   my_character_id: string;

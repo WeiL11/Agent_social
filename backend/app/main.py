@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.admin_ui import setup_admin
 from app.api import (
     routes_admin,
     routes_character_friends,
@@ -9,12 +10,14 @@ from app.api import (
     routes_health,
     routes_matches,
     routes_me,
+    routes_messages,
     routes_profiles,
     routes_render,
     routes_share,
     routes_social,
 )
 from app.core.config import settings
+from app.core.db import engine
 
 app = FastAPI(title="AI Persona Game API", version="0.1.0")
 
@@ -34,6 +37,10 @@ app.include_router(routes_dispatch.router)
 app.include_router(routes_render.router)
 app.include_router(routes_matches.router)
 app.include_router(routes_me.router)
+app.include_router(routes_messages.router)
 app.include_router(routes_social.router)
 app.include_router(routes_share.router)
 app.include_router(routes_admin.router)
+
+# Ops UI (sqladmin) mounted at /ops — password-gated.
+setup_admin(app, engine)
