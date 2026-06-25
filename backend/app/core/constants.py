@@ -54,3 +54,13 @@ TRAIT_WHITELIST: set[str] = {
 
 VALID_FACETS: set[str] = set(FACET_TO_ARCHETYPE.keys())
 MAX_FACETS = 4
+
+# Human-readable facet labels (for matchmaking reasons, etc.)
+FACET_LABELS: dict[str, str] = {
+    "coding": "程式",
+    "analytical": "分析",
+    "creative": "創作",
+    "social": "社交",
+    "learning": "學習",
+    "planning": "規劃",
+}

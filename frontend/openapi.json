@@ -944,6 +944,315 @@
         }
       }
     },
+    "/matches": {
+      "get": {
+        "tags": [
+          "matchmaking"
+        ],
+        "summary": "Get Matches",
+        "operationId": "get_matches_matches_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-dev-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MatchOut"
+                  },
+                  "title": "Response Get Matches Matches Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/matches/{their_character_id}/wave": {
+      "post": {
+        "tags": [
+          "matchmaking"
+        ],
+        "summary": "Wave",
+        "operationId": "wave_matches__their_character_id__wave_post",
+        "parameters": [
+          {
+            "name": "their_character_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Their Character Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-dev-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/WaveIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaveResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me": {
+      "get": {
+        "tags": [
+          "me"
+        ],
+        "summary": "Get Me",
+        "operationId": "get_me_me_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-dev-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "me"
+        ],
+        "summary": "Update Me",
+        "operationId": "update_me_me_put",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-dev-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MeUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/friends/requests": {
       "post": {
         "tags": [
@@ -2213,6 +2522,73 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "MatchOut": {
+        "properties": {
+          "their_character": {
+            "$ref": "#/components/schemas/CharacterOut"
+          },
+          "my_character_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "My Character Id"
+          },
+          "score": {
+            "type": "integer",
+            "title": "Score"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "waved": {
+            "type": "boolean",
+            "title": "Waved"
+          }
+        },
+        "type": "object",
+        "required": [
+          "their_character",
+          "my_character_id",
+          "score",
+          "reasons",
+          "waved"
+        ],
+        "title": "MatchOut"
+      },
+      "MeOut": {
+        "properties": {
+          "handle": {
+            "type": "string",
+            "title": "Handle"
+          },
+          "discoverable": {
+            "type": "boolean",
+            "title": "Discoverable"
+          }
+        },
+        "type": "object",
+        "required": [
+          "handle",
+          "discoverable"
+        ],
+        "title": "MeOut"
+      },
+      "MeUpdate": {
+        "properties": {
+          "discoverable": {
+            "type": "boolean",
+            "title": "Discoverable"
+          }
+        },
+        "type": "object",
+        "required": [
+          "discoverable"
+        ],
+        "title": "MeUpdate"
+      },
       "ScenarioOut": {
         "properties": {
           "id": {
@@ -2458,6 +2834,49 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "WaveIn": {
+        "properties": {
+          "from_character_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Character Id"
+          }
+        },
+        "type": "object",
+        "title": "WaveIn"
+      },
+      "WaveResult": {
+        "properties": {
+          "matched": {
+            "type": "boolean",
+            "title": "Matched"
+          },
+          "friendship_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Friendship Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "matched"
+        ],
+        "title": "WaveResult"
       }
     }
   }

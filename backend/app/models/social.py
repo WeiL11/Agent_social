@@ -49,6 +49,20 @@ class CharacterFriendship(Base, TimestampMixin):
     )
 
 
+class MatchWave(Base, TimestampMixin):
+    """A 'wave' = expressing interest after a match. When both users have waved
+    at each other, they become owner-friends (consent-gated bot->real bridge)."""
+
+    __tablename__ = "match_waves"
+    __table_args__ = (UniqueConstraint("from_user_id", "to_user_id", name="uq_wave_pair"),)
+
+    id: Mapped[uuid.UUID] = uuidpk()
+    from_user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    to_user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    from_character_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("characters.id", ondelete="CASCADE"))
+    to_character_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("characters.id", ondelete="CASCADE"))
+
+
 class CharacterShare(Base, TimestampMixin):
     """A share grant: either to a specific friend, or public via token (for a
     shareable link / card image)."""

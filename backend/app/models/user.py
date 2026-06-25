@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import String
+from sqlalchemy import String, true
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base, TimestampMixin, uuidpk
@@ -15,3 +15,5 @@ class User(Base, TimestampMixin):
     auth_provider: Mapped[str | None] = mapped_column(String(32), nullable=True)
     supabase_uid: Mapped[str | None] = mapped_column(String(128), unique=True, nullable=True)
     is_banned: Mapped[bool] = mapped_column(default=False)
+    discoverable: Mapped[bool] = mapped_column(  # opt-in to matchmaking pool
+        default=True, server_default=true())

@@ -58,6 +58,24 @@ export interface SelfExtractProfile {
   overall_summary?: string | null;
 }
 
+export interface Match {
+  their_character: Character;  // persona shown; human identity hidden until mutual wave
+  my_character_id: string;
+  score: number;              // 0..100 compatibility
+  reasons: string[];
+  waved: boolean;
+}
+
+export interface WaveResult {
+  matched: boolean;           // both waved -> now owner-friends
+  friendship_id: string | null;
+}
+
+export interface Me {
+  handle: string;
+  discoverable: boolean;
+}
+
 export interface CharacterFriendResult {
   friend: Character;        // only the other creature is revealed (no owner info)
   remaining_today: number;  // character-level befriend quota left today

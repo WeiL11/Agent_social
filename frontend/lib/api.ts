@@ -6,7 +6,7 @@
 
 import type {
   Character, CharacterFriendResult, DispatchResult, Friend, GenerateResult,
-  Scenario, SelfExtractProfile, ShareResult, SharedCharacter,
+  Match, Me, Scenario, SelfExtractProfile, ShareResult, SharedCharacter, WaveResult,
 } from "./types";
 
 export const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -56,6 +56,17 @@ export const createDispatch = (scenarioId: string, characterIds: string[], seed?
     method: "POST",
     body: JSON.stringify({ scenario_id: scenarioId, character_ids: characterIds, seed }),
   });
+
+// ---- matchmaking (model A: persona as matchmaker) ----
+export const getMatches = (limit = 10) => req<Match[]>(`/matches?limit=${limit}`);
+export const wave = (theirCharacterId: string, fromCharacterId?: string) =>
+  req<WaveResult>(`/matches/${theirCharacterId}/wave`, {
+    method: "POST",
+    body: JSON.stringify(fromCharacterId ? { from_character_id: fromCharacterId } : {}),
+  });
+export const getMe = () => req<Me>("/me");
+export const setDiscoverable = (discoverable: boolean) =>
+  req<Me>("/me", { method: "PUT", body: JSON.stringify({ discoverable }) });
 
 // ---- friends ----
 export const listFriends = () => req<Friend[]>("/friends");

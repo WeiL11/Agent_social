@@ -86,6 +86,16 @@ Base URL：`http://localhost:8000`（設在 `NEXT_PUBLIC_API_URL`）。
   判定純規則：隊伍各軸取最佳值 → 比對 `requirements.min` 門檻、`fail_above` 過高自動失敗、
   `synergy_traits` 命中加成、seed 控制隨機。同 seed 同結果（可重播）。
 
+### 配對（核心社交：分身當媒人配對真人）
+- `GET /me`（auth）→ `{ handle, discoverable }`；`PUT /me` body `{ discoverable }` → 開關被配對
+- `GET /matches?limit=10`（auth）→ `Match[]`
+  `{ their_character: CharacterOut, my_character_id, score(0–100), reasons: string[], waved }`
+  （顯示對方角色卡與契合原因，**不露對方真人身分**；契合度純規則算、可調權重）
+- `POST /matches/{their_character_id}/wave`（auth）body `{ from_character_id? }` → `WaveResult`
+  `{ matched, friendship_id }`。**雙方互相揮手 → 自動成為飼主好友**（真人連結）。
+
+典型配對流程：`GET /matches` 看推薦 → `wave` 表達興趣 → 對方也 wave → 變飼主好友 → 真人互動。
+
 ### 好友（兩種層級）
 
 **A. 飼主好友（user ↔ user，一般加好友，上限 100）**

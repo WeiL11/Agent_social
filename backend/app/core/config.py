@@ -23,6 +23,22 @@ class Settings(BaseSettings):
     owner_friend_cap: int = 100          # max accepted owner(user)-level friends
     character_friend_daily_limit: int = 2  # new character-level friends per character per day
 
+    # Matchmaking weights (tunable later / via game_config). Default leans
+    # "similarity with a little complementarity".
+    match_w_similarity: float = 0.50
+    match_w_traits: float = 0.25
+    match_w_facet: float = 0.15
+    match_w_complement: float = 0.10
+
+    @property
+    def match_weights(self) -> dict[str, float]:
+        return {
+            "similarity": self.match_w_similarity,
+            "traits": self.match_w_traits,
+            "facet": self.match_w_facet,
+            "complement": self.match_w_complement,
+        }
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
