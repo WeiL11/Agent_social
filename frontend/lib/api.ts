@@ -5,9 +5,9 @@
 // Auth: dev uses X-Dev-User; swap `authHeaders()` to Supabase Bearer in prod.
 
 import type {
-  Character, CharacterFriendResult, Conversation, DirectMessage, DispatchResult,
-  Friend, GenerateResult, Match, Me, Scenario, SelfExtractProfile, ShareResult,
-  SharedCharacter, WaveResult,
+  Character, CharacterChat, CharacterChatSummary, CharacterFriendResult, Conversation,
+  DirectMessage, DispatchResult, Friend, GenerateResult, Match, Me, Scenario,
+  SelfExtractProfile, ShareResult, SharedCharacter, WaveResult,
 } from "./types";
 
 export const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -99,6 +99,16 @@ export const listCharacterFriends = (characterId: string) =>
   req<Character[]>(`/characters/${characterId}/friends`);  // only the other creature
 export const unfriendCharacter = (characterId: string, otherCharacterId: string) =>
   req<{ deleted: string }>(`/characters/${characterId}/friends/${otherCharacterId}`, { method: "DELETE" });
+
+// ---- character <-> character chat (short auto-conversation + summary) ----
+export const startCharacterChat = (characterId: string, withCharacterId: string) =>
+  req<CharacterChat>(`/characters/${characterId}/chats`, {
+    method: "POST", body: JSON.stringify({ with_character_id: withCharacterId }),
+  });
+export const listCharacterChats = (characterId: string) =>
+  req<CharacterChatSummary[]>(`/characters/${characterId}/chats`);
+export const getCharacterChat = (chatId: string) =>
+  req<CharacterChat>(`/character-chats/${chatId}`);
 
 // ---- sharing ----
 export const shareCharacter = (id: string, target: "public" | string) =>

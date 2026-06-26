@@ -10,7 +10,8 @@ Part of the B-system; never touches A-system progression."""
 
 import uuid
 
-from sqlalchemy import Boolean, ForeignKey, String, UniqueConstraint
+from sqlalchemy import Boolean, ForeignKey, String, Text, UniqueConstraint
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base, TimestampMixin, uuidpk
@@ -47,6 +48,21 @@ class CharacterFriendship(Base, TimestampMixin):
     character_b_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("characters.id", ondelete="CASCADE"), index=True
     )
+
+
+class CharacterChat(Base, TimestampMixin):
+    """A short auto-generated encounter between two creatures (model B). Kept
+    brief; we store the transcript + a one-line summary."""
+
+    __tablename__ = "character_chats"
+
+    id: Mapped[uuid.UUID] = uuidpk()
+    character_a_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("characters.id", ondelete="CASCADE"), index=True)
+    character_b_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("characters.id", ondelete="CASCADE"), index=True)
+    transcript: Mapped[list] = mapped_column(JSONB, default=list)  # [{speaker, character_id, text}]
+    summary: Mapped[str | None] = mapped_column(Text, nullable=True)
 
 
 class MatchWave(Base, TimestampMixin):

@@ -20,7 +20,13 @@ from app.models.community import (
 from app.models.dispatch import Dispatch, Scenario
 from app.models.ingestion import Upload
 from app.models.message import Message
-from app.models.social import CharacterFriendship, CharacterShare, Friendship, MatchWave
+from app.models.social import (
+    CharacterChat,
+    CharacterFriendship,
+    CharacterShare,
+    Friendship,
+    MatchWave,
+)
 from app.models.user import User
 
 __all__ = [
@@ -50,6 +56,7 @@ __all__ = [
     "GameConfig",
     "Friendship",
     "CharacterFriendship",
+    "CharacterChat",
     "CharacterShare",
     "MatchWave",
     "Message",

@@ -74,6 +74,23 @@ export interface Conversation {
   unread: number;
 }
 
+export interface CharacterChatLine {
+  speaker: string;
+  character_id: string | null;
+  text: string;
+}
+export interface CharacterChat {
+  id: string;
+  transcript: CharacterChatLine[];
+  summary: string | null;
+  created_at: string;
+}
+export interface CharacterChatSummary {
+  id: string;
+  summary: string | null;
+  created_at: string;
+}
+
 export interface Match {
   their_character: Character;  // persona shown; human identity hidden until mutual wave
   my_character_id: string;

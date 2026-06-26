@@ -26,6 +26,9 @@ class Settings(BaseSettings):
     facet_weight_threshold: int = 30
     owner_friend_cap: int = 100          # max accepted owner(user)-level friends
     character_friend_daily_limit: int = 2  # new character-level friends per character per day
+    # Character<->character auto-chat (model B), kept short + summarized to bound cost.
+    character_chat_turns: int = 3          # exchanges per encounter (a+b counts as 1)
+    character_chat_daily_limit: int = 5    # encounters a character can start per day
 
     # Matchmaking weights (tunable later / via game_config). Default leans
     # "similarity with a little complementarity".

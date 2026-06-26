@@ -1,9 +1,38 @@
-/* Blank canvas — redesign freely. */
+/* Rough but usable styling — redesign freely. */
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  color: #1a1a1a;
-  background: #fafafa;
+  font-family: system-ui, -apple-system, "Segoe UI", "PingFang TC", sans-serif;
+  color: #1a1a1a; background: #f6f5fb;
 }
-a { color: inherit; }
+a { color: #6b4eff; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+nav.topbar {
+  display: flex; gap: 16px; align-items: center;
+  padding: 12px 20px; background: #fff; border-bottom: 1px solid #eceaf3;
+  position: sticky; top: 0; z-index: 10;
+}
+nav.topbar .brand { font-weight: 800; margin-right: auto; }
+
+.container { max-width: 760px; margin: 24px auto; padding: 0 16px; }
+.card { background: #fff; border: 1px solid #eceaf3; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+.row { display: flex; gap: 12px; align-items: center; }
+.muted { color: #8b8b96; font-size: 13px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+
+button {
+  background: #6b4eff; color: #fff; border: 0; border-radius: 8px;
+  padding: 8px 14px; cursor: pointer; font-size: 14px;
+}
+button.ghost { background: #f0eefb; color: #6b4eff; }
+button:disabled { opacity: .5; cursor: default; }
+input, textarea, select {
+  border: 1px solid #d8d5e6; border-radius: 8px; padding: 8px; font-size: 14px; width: 100%;
+}
+.pill { display: inline-block; background: #f0eefb; color: #6b4eff; border-radius: 999px;
+  padding: 2px 10px; font-size: 12px; margin: 2px; }
+.bubble { padding: 8px 12px; border-radius: 14px; margin: 4px 0; max-width: 75%; }
+.bubble.me { background: #6b4eff; color: #fff; margin-left: auto; }
+.bubble.them { background: #eceaf3; }
+.err { color: #c0392b; font-size: 13px; }

@@ -8,7 +8,15 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh-Hant">
-      <body>{children}</body>
+      <body>
+        <nav className="topbar">
+          <a className="brand" href="/">🪄 AI Persona</a>
+          <a href="/">我的角色</a>
+          <a href="/friends">朋友 / 配對</a>
+          <a href="/settings">設定</a>
+        </nav>
+        {children}
+      </body>
     </html>
   );
 }
