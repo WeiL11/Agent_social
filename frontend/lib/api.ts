@@ -6,16 +6,26 @@
 
 import type {
   Character, CharacterChat, CharacterChatSummary, CharacterFriendResult, Conversation,
-  DirectMessage, DispatchResult, Friend, GenerateResult, Match, Me, Scenario,
+  DirectMessage, DispatchResult, Encounter, Friend, GenerateResult, Match, Me, Scenario,
   SelfExtractProfile, ShareResult, SharedCharacter, WaveResult,
 } from "./types";
 
 export const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-const DEV_USER = process.env.NEXT_PUBLIC_DEV_USER ?? "alice";
+
+// Friendly-beta auth: the player picks a handle once (stored locally) and it is
+// sent as X-Dev-User. Swap authHeaders() to a Supabase Bearer token for real auth.
+export function getHandle(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("persona_handle");
+}
+export function setHandle(h: string) {
+  localStorage.setItem("persona_handle", h.trim().toLowerCase().replace(/[^a-z0-9_-]/g, ""));
+}
+export function clearHandle() { localStorage.removeItem("persona_handle"); }
 
 function authHeaders(): Record<string, string> {
-  return { "X-Dev-User": DEV_USER };
-  // prod: return { Authorization: `Bearer ${supabaseAccessToken}` };
+  const h = getHandle();
+  return h ? { "X-Dev-User": h } : {};
 }
 
 async function req<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -57,6 +67,20 @@ export const createDispatch = (scenarioId: string, characterIds: string[], seed?
     method: "POST",
     body: JSON.stringify({ scenario_id: scenarioId, character_ids: characterIds, seed }),
   });
+
+// ---- real extraction: paste conversation TEXT -> characters ----
+export const extractFromText = (text: string, applyMode: "create_new" | "enrich_existing" = "create_new",
+                                enrichCharacterId?: string) =>
+  req<GenerateResult & { engine: string }>("/profiles/extract", {
+    method: "POST",
+    body: JSON.stringify({ text, apply_mode: applyMode, enrich_character_id: enrichCharacterId ?? null }),
+  });
+
+// ---- 邂逅 explore: sprite meets compatible strangers ----
+export const explore = (characterId: string) =>
+  req<{ encounter: Encounter | null; remaining_today: number; message: string }>(
+    `/characters/${characterId}/explore`, { method: "POST" });
+export const myEncounters = () => req<Encounter[]>("/me/encounters");
 
 // ---- matchmaking (model A: persona as matchmaker) ----
 export const getMatches = (limit = 10) => req<Match[]>(`/matches?limit=${limit}`);

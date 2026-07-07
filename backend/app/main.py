@@ -8,6 +8,7 @@ from app.api import (
     routes_character_friends,
     routes_characters,
     routes_dispatch,
+    routes_explore,
     routes_health,
     routes_matches,
     routes_me,
@@ -35,6 +36,7 @@ app.include_router(routes_profiles.router)
 app.include_router(routes_characters.router)
 app.include_router(routes_character_friends.router)
 app.include_router(routes_character_chat.router)
+app.include_router(routes_explore.router)
 app.include_router(routes_dispatch.router)
 app.include_router(routes_render.router)
 app.include_router(routes_matches.router)

@@ -91,6 +91,18 @@ export interface CharacterChatSummary {
   created_at: string;
 }
 
+export interface Encounter {
+  chat_id: string;
+  my_character: Character;
+  other_character: Character;   // stranger sprite's public profile (owner hidden)
+  compatibility: number;
+  reasons: string[];
+  transcript: CharacterChatLine[];
+  summary: string | null;
+  created_at: string;
+  waved: boolean;
+}
+
 export interface Match {
   their_character: Character;  // persona shown; human identity hidden until mutual wave
   my_character_id: string;

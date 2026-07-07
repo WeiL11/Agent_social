@@ -2,7 +2,10 @@
 -> facet ranking -> rule-based character generation (respecting the slot cap),
 or enrich an existing character. LLM (if configured) only writes persona text."""
 
+import uuid
+
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -16,10 +19,38 @@ from app.models.user import User
 from app.schemas.character import CharacterOut, GenerateResult
 from app.schemas.profile import GenerateProfileRequest
 from app.services.deid import scrub
+from app.services.extraction import extract_profile
 from app.services.facets import rank_facets
 from app.services.generation import generate_character_fields
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
+
+
+class ExtractRequest(BaseModel):
+    text: str = Field(min_length=20, max_length=200_000)  # raw conversation text
+    apply_mode: str = "create_new"  # create_new | enrich_existing
+    enrich_character_id: uuid.UUID | None = None
+
+
+class ExtractResult(GenerateResult):
+    engine: str  # "gemini" | "rules"
+
+
+@router.post("/extract", response_model=ExtractResult)
+def extract_and_generate(
+    body: ExtractRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """The real soul-pipeline: paste raw AI-conversation text -> de-identify ->
+    extract personality (Gemini if configured, rules otherwise) -> characters."""
+    profile, engine = extract_profile(body.text, settings.gemini_api_key)
+    inner = GenerateProfileRequest(
+        source="self_extract", profile=profile,
+        apply_mode=body.apply_mode, enrich_character_id=body.enrich_character_id,
+    )
+    result = create_profile(inner, db=db, user=user)
+    return ExtractResult(**result.model_dump(), engine=engine)
 
 
 @router.post("", response_model=GenerateResult)

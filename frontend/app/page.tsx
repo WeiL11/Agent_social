@@ -1,45 +1,47 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { avatarUrl, generateFromProfile, listCharacters } from "../lib/api";
-import { SAMPLE_PROFILE } from "../lib/sample";
+import { avatarUrl, extractFromText, listCharacters } from "../lib/api";
 import type { Character } from "../lib/types";
+
+const PLACEHOLDER = `把你和 ChatGPT / Claude / Gemini 的一段對話貼進來（越多越準，會先去識別化）。
+
+例如直接複製你最近問 AI 的十幾則訊息。系統會分析你的溝通風格，長出屬於你的小精靈。`;
 
 export default function Home() {
   const [chars, setChars] = useState<Character[] | null>(null);
   const [showAdd, setShowAdd] = useState(false);
-  const [json, setJson] = useState(JSON.stringify(SAMPLE_PROFILE, null, 2));
-  const [err, setErr] = useState("");
+  const [text, setText] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
 
   async function load() {
-    try { setChars(await listCharacters()); } catch (e: any) { setErr(e.message); }
+    try { setChars(await listCharacters()); } catch { /* not logged in yet */ }
   }
   useEffect(() => { load(); }, []);
 
   async function onCreate() {
-    setErr("");
+    setBusy(true); setMsg("");
     try {
-      await generateFromProfile(JSON.parse(json));
-      setShowAdd(false);
+      const r = await extractFromText(text);
+      setMsg(`✨ 生成了 ${r.created.length} 隻小精靈！（分析引擎：${r.engine === "gemini" ? "Gemini" : "規則"}）`
+        + (r.skipped_facets.length ? `｜已滿 ${r.slot_cap} 隻，略過：${r.skipped_facets.join("、")}` : ""));
+      setShowAdd(false); setText("");
       load();
-    } catch (e: any) { setErr(e.message); }
+    } catch (e: any) { setMsg(e.message); }
+    setBusy(false);
   }
 
   const empty = chars !== null && chars.length === 0;
 
   return (
     <main className="container">
-      {/* First-open intro */}
       {empty && (
         <div className="card" style={{ background: "linear-gradient(135deg,#efeaff,#fff)" }}>
           <h1>歡迎 👋</h1>
-          <p>把你跟 AI 的對話「性格」變成一隻小精靈。養成牠、派牠冒險，再用牠幫你配對到合得來的人。</p>
-          <ol className="muted">
-            <li>① 貼上你的「自我萃取側寫」JSON（或先用範例）</li>
-            <li>② 生成你的第一隻角色</li>
-            <li>③ 到「朋友 / 配對」找同類</li>
-          </ol>
-          <button onClick={() => setShowAdd(true)}>＋ 生成我的第一隻角色</button>
+          <p>貼上一段你和 AI 的對話，你的「性格」會長成一隻小精靈。<br />
+            養成牠、讓牠每天出門認識別的小精靈，再決定要不要跟對方的主人交朋友。</p>
+          <button onClick={() => setShowAdd(true)}>＋ 生成我的第一隻小精靈</button>
         </div>
       )}
 
@@ -48,20 +50,21 @@ export default function Home() {
         {!empty && <button onClick={() => setShowAdd(!showAdd)}>＋ 新增角色</button>}
       </div>
 
-      {/* Add-character window */}
       {showAdd && (
         <div className="card">
-          <h3>新增角色</h3>
-          <p className="muted">貼上自我萃取側寫 JSON（在你自己的 AI 跑出來的），或直接用預填範例。</p>
-          <textarea rows={10} value={json} onChange={(e) => setJson(e.target.value)}
-            style={{ fontFamily: "monospace", fontSize: 12 }} />
+          <h3>用你的 AI 對話生成角色</h3>
+          <p className="muted">貼上你與 AI 的對話文字（至少幾百字較準）。內容會先去除 email/電話等個資，只保留性格分析結果，不儲存原文。</p>
+          <textarea rows={10} value={text} onChange={(e) => setText(e.target.value)}
+            placeholder={PLACEHOLDER} />
           <div className="row" style={{ marginTop: 8 }}>
-            <button onClick={onCreate}>生成</button>
+            <button onClick={onCreate} disabled={busy || text.trim().length < 20}>
+              {busy ? "分析中…" : "分析並生成"}
+            </button>
             <button className="ghost" onClick={() => setShowAdd(false)}>取消</button>
           </div>
-          {err && <p className="err">{err}</p>}
         </div>
       )}
+      {msg && <p className="muted">{msg}</p>}
 
       {chars === null ? <p className="muted">載入中…</p> : (
         <div className="grid">

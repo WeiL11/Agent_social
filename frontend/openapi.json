@@ -43,6 +43,82 @@
         }
       }
     },
+    "/profiles/extract": {
+      "post": {
+        "tags": [
+          "profiles"
+        ],
+        "summary": "Extract And Generate",
+        "description": "The real soul-pipeline: paste raw AI-conversation text -> de-identify ->\nextract personality (Gemini if configured, rules otherwise) -> characters.",
+        "operationId": "extract_and_generate_profiles_extract_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-dev-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtractRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/profiles": {
       "post": {
         "tags": [
@@ -897,6 +973,151 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CharacterChatOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/characters/{character_id}/explore": {
+      "post": {
+        "tags": [
+          "explore"
+        ],
+        "summary": "Explore",
+        "operationId": "explore_characters__character_id__explore_post",
+        "parameters": [
+          {
+            "name": "character_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Character Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-dev-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExploreResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/encounters": {
+      "get": {
+        "tags": [
+          "explore"
+        ],
+        "summary": "My Encounters",
+        "description": "今日邂逅 digest across all my sprites, newest first.",
+        "operationId": "my_encounters_me_encounters_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-dev-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EncounterOut"
+                  },
+                  "title": "Response My Encounters Me Encounters Get"
                 }
               }
             }
@@ -2976,6 +3197,168 @@
           "characters"
         ],
         "title": "DispatchResult"
+      },
+      "EncounterOut": {
+        "properties": {
+          "chat_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Chat Id"
+          },
+          "my_character": {
+            "$ref": "#/components/schemas/CharacterOut"
+          },
+          "other_character": {
+            "$ref": "#/components/schemas/CharacterOut"
+          },
+          "compatibility": {
+            "type": "integer",
+            "title": "Compatibility"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "transcript": {
+            "items": {
+              "$ref": "#/components/schemas/ChatLine"
+            },
+            "type": "array",
+            "title": "Transcript"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "waved": {
+            "type": "boolean",
+            "title": "Waved"
+          }
+        },
+        "type": "object",
+        "required": [
+          "chat_id",
+          "my_character",
+          "other_character",
+          "compatibility",
+          "reasons",
+          "transcript",
+          "summary",
+          "created_at",
+          "waved"
+        ],
+        "title": "EncounterOut",
+        "description": "One 邂逅: my sprite met a stranger sprite. Shows the other sprite's public\nprofile + the short chat + summary; the other OWNER's identity stays hidden\nuntil a mutual wave."
+      },
+      "ExploreResult": {
+        "properties": {
+          "encounter": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EncounterOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "remaining_today": {
+            "type": "integer",
+            "title": "Remaining Today"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "encounter",
+          "remaining_today",
+          "message"
+        ],
+        "title": "ExploreResult"
+      },
+      "ExtractRequest": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 200000,
+            "minLength": 20,
+            "title": "Text"
+          },
+          "apply_mode": {
+            "type": "string",
+            "title": "Apply Mode",
+            "default": "create_new"
+          },
+          "enrich_character_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enrich Character Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "ExtractRequest"
+      },
+      "ExtractResult": {
+        "properties": {
+          "created": {
+            "items": {
+              "$ref": "#/components/schemas/CharacterOut"
+            },
+            "type": "array",
+            "title": "Created"
+          },
+          "skipped_facets": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Skipped Facets"
+          },
+          "slot_cap": {
+            "type": "integer",
+            "title": "Slot Cap"
+          },
+          "engine": {
+            "type": "string",
+            "title": "Engine"
+          }
+        },
+        "type": "object",
+        "required": [
+          "created",
+          "skipped_facets",
+          "slot_cap",
+          "engine"
+        ],
+        "title": "ExtractResult"
       },
       "FacetIn": {
         "properties": {

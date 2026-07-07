@@ -28,7 +28,11 @@ class Settings(BaseSettings):
     character_friend_daily_limit: int = 2  # new character-level friends per character per day
     # Character<->character auto-chat (model B), kept short + summarized to bound cost.
     character_chat_turns: int = 3          # exchanges per encounter (a+b counts as 1)
-    character_chat_daily_limit: int = 5    # encounters a character can start per day
+    character_chat_daily_limit: int = 5    # chats a character can start per day (with friends)
+    character_explore_daily_limit: int = 2  # strangers a character can meet per day (邂逅)
+
+    # Gemini for real personality extraction (free tier). Empty => rule-based fallback.
+    gemini_api_key: str | None = None
 
     # Matchmaking weights (tunable later / via game_config). Default leans
     # "similarity with a little complementarity".
