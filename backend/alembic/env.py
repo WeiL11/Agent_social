@@ -7,7 +7,8 @@ from app.core.config import settings
 from app.models import Base  # imports all models -> full metadata
 
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.database_url)
+# configparser interpolation: '%' in URL-encoded passwords must be escaped.
+config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
