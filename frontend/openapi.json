@@ -49,7 +49,7 @@
           "profiles"
         ],
         "summary": "Extract And Generate",
-        "description": "The real soul-pipeline: paste raw AI-conversation text -> de-identify ->\nextract personality (Gemini if configured, rules otherwise) -> characters.",
+        "description": "The real soul-pipeline: paste raw AI-conversation text -> de-identify ->\nextract personality (Gemini if configured + within budget, rules otherwise)\n-> characters.",
         "operationId": "extract_and_generate_profiles_extract_post",
         "parameters": [
           {
@@ -3584,6 +3584,11 @@
           "discoverable": {
             "type": "boolean",
             "title": "Discoverable"
+          },
+          "handle_is_placeholder": {
+            "type": "boolean",
+            "title": "Handle Is Placeholder",
+            "default": false
           }
         },
         "type": "object",
@@ -3596,14 +3601,29 @@
       "MeUpdate": {
         "properties": {
           "discoverable": {
-            "type": "boolean",
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Discoverable"
+          },
+          "handle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Handle"
           }
         },
         "type": "object",
-        "required": [
-          "discoverable"
-        ],
         "title": "MeUpdate"
       },
       "MessageIn": {

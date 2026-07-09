@@ -10,10 +10,12 @@ import type {
   SelfExtractProfile, ShareResult, SharedCharacter, WaveResult,
 } from "./types";
 
+import { authEnabled, getToken } from "./supabase";
+
 export const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
-// Friendly-beta auth: the player picks a handle once (stored locally) and it is
-// sent as X-Dev-User. Swap authHeaders() to a Supabase Bearer token for real auth.
+// Auth: production uses Supabase (Bearer token, kept fresh by lib/supabase.ts);
+// local dev without Supabase env falls back to the X-Dev-User handle mode.
 export function getHandle(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("persona_handle");
@@ -24,6 +26,10 @@ export function setHandle(h: string) {
 export function clearHandle() { localStorage.removeItem("persona_handle"); }
 
 function authHeaders(): Record<string, string> {
+  if (authEnabled) {
+    const t = getToken();
+    return t ? { Authorization: `Bearer ${t}` } : {};
+  }
   const h = getHandle();
   return h ? { "X-Dev-User": h } : {};
 }
@@ -92,6 +98,8 @@ export const wave = (theirCharacterId: string, fromCharacterId?: string) =>
 export const getMe = () => req<Me>("/me");
 export const setDiscoverable = (discoverable: boolean) =>
   req<Me>("/me", { method: "PUT", body: JSON.stringify({ discoverable }) });
+export const chooseHandle = (handle: string) =>
+  req<Me>("/me", { method: "PUT", body: JSON.stringify({ handle }) });
 
 // ---- direct messages (owner-friends only) ----
 export const getConversations = () => req<Conversation[]>("/conversations");

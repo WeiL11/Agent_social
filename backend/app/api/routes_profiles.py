@@ -22,6 +22,7 @@ from app.services.deid import scrub
 from app.services.extraction import extract_profile
 from app.services.facets import rank_facets
 from app.services.generation import generate_character_fields
+from app.services.llm_budget import try_spend_llm
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
 
@@ -43,8 +44,10 @@ def extract_and_generate(
     user: User = Depends(get_current_user),
 ):
     """The real soul-pipeline: paste raw AI-conversation text -> de-identify ->
-    extract personality (Gemini if configured, rules otherwise) -> characters."""
-    profile, engine = extract_profile(body.text, settings.gemini_api_key)
+    extract personality (Gemini if configured + within budget, rules otherwise)
+    -> characters."""
+    llm_key = settings.gemini_api_key if try_spend_llm(db) else None
+    profile, engine = extract_profile(body.text, llm_key)
     inner = GenerateProfileRequest(
         source="self_extract", profile=profile,
         apply_mode=body.apply_mode, enrich_character_id=body.enrich_character_id,

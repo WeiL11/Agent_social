@@ -119,6 +119,7 @@ export interface WaveResult {
 export interface Me {
   handle: string;
   discoverable: boolean;
+  handle_is_placeholder: boolean; // true right after first real-auth login
 }
 
 export interface CharacterFriendResult {

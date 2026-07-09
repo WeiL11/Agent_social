@@ -25,7 +25,9 @@ class WaveResult(BaseModel):
 class MeOut(BaseModel):
     handle: str
     discoverable: bool
+    handle_is_placeholder: bool = False  # frontend prompts to pick a real handle
 
 
 class MeUpdate(BaseModel):
-    discoverable: bool
+    discoverable: bool | None = None
+    handle: str | None = None  # unique; 3-24 chars [a-z0-9_-]

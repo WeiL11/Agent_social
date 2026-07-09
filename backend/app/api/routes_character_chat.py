@@ -20,6 +20,7 @@ from app.schemas.character_chat import (
     ChatStartIn,
 )
 from app.services.character_chat import generate_chat
+from app.services.llm_budget import try_spend_llm
 
 router = APIRouter(tags=["character-chat"])
 
@@ -71,8 +72,10 @@ def start_chat(character_id: uuid.UUID, body: ChatStartIn, db: Session = Depends
     if _started_today(db, me.id) >= limit:
         raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, f"daily chat limit reached ({limit})")
 
+    llm_key = settings.gemini_api_key if try_spend_llm(db) else None
     result = generate_chat(_as_dict(me), _as_dict(other),
-                           settings.character_chat_turns, settings.llm_provider)
+                           settings.character_chat_turns, settings.llm_provider,
+                           api_key=llm_key)
     chat = CharacterChat(character_a_id=me.id, character_b_id=other.id,
                          transcript=result["transcript"], summary=result["summary"])
     db.add(chat)

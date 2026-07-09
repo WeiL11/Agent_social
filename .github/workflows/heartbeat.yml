@@ -1,0 +1,25 @@
+name: Heartbeat
+
+# Every 15 min: ping API + WEB. A failed run makes GitHub email the repo owner.
+# Side benefits: keeps the HF Spaces awake (48h sleep) and the Supabase free
+# project active (7-day pause).
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: API health
+        run: |
+          body=$(curl -sS -m 60 --retry 2 --retry-delay 10 https://wei25-agent-social-api.hf.space/health)
+          echo "$body"
+          echo "$body" | grep -q '"db":true' || { echo "::error::API unhealthy: $body"; exit 1; }
+      - name: WEB up
+        run: |
+          code=$(curl -sS -o /dev/null -w "%{http_code}" -m 60 --retry 2 --retry-delay 10 https://wei25-agent-social-web.hf.space)
+          echo "WEB $code"
+          [ "$code" = "200" ] || { echo "::error::WEB returned $code"; exit 1; }

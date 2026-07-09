@@ -17,7 +17,9 @@
 6. **凡是使用者觸發的寫入都要限流**（每日上限模式，見 explore/chat/friends 的 `_xxx_today()`）。
 7. **隱私前置**：任何使用者原文在落庫/送 LLM 前先過 `deid.scrub()`；原始對話永不留存。
 8. **migration 規矩**：既有表加 NOT NULL 欄位必須帶 `server_default`（否則線上炸，踩過）；
-   migration 必須能在「空庫」與「有資料的庫」都跑過。
+   migration 必須能在「空庫」與「有資料的庫」都跑過；**新表一律 `ENABLE ROW LEVEL SECURITY`**
+   （Supabase 的 anon key 能經 PostgREST 碰到 public schema 所有沒開 RLS 的表——開 RLS 不寫
+   policy = API 全拒、我們的後端是表擁有者不受影響，見 migration b2c4e6a80001）。
 9. **契約同步**：後端 API 有變 → 必更新 `frontend/lib/api.ts`、`lib/types.ts`、`API.md`、
    重生 `openapi.json`。前端永遠不自己發明欄位。
 10. **測了才算完成**：新功能至少「正常路 + 權限擋 + 限流擋」三個測試；`pytest` 綠 + `ruff` 淨才 push。

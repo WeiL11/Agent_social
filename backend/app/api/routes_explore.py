@@ -20,6 +20,7 @@ from app.models.user import User
 from app.schemas.character import CharacterOut
 from app.schemas.explore import EncounterOut, ExploreResult
 from app.services.character_chat import generate_chat
+from app.services.llm_budget import try_spend_llm
 from app.services.matchmaking import compatibility
 
 router = APIRouter(tags=["explore"])
@@ -93,8 +94,10 @@ def explore(character_id: uuid.UUID, db: Session = Depends(get_db),
     scored.sort(key=lambda t: t[0]["score"], reverse=True)
     comp, other = scored[0]
 
+    llm_key = settings.gemini_api_key if try_spend_llm(db) else None
     chat_res = generate_chat(_as_dict(me), _as_dict(other),
-                             settings.character_chat_turns, settings.llm_provider)
+                             settings.character_chat_turns, settings.llm_provider,
+                             api_key=llm_key)
     chat = CharacterChat(character_a_id=me.id, character_b_id=other.id,
                          transcript=chat_res["transcript"], summary=chat_res["summary"])
     db.add(chat)

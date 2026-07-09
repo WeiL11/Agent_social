@@ -31,8 +31,10 @@ class Settings(BaseSettings):
     character_chat_daily_limit: int = 5    # chats a character can start per day (with friends)
     character_explore_daily_limit: int = 2  # strangers a character can meet per day (邂逅)
 
-    # Gemini for real personality extraction (free tier). Empty => rule-based fallback.
+    # Gemini for real extraction + encounter dialogue (free tier).
+    # Empty => rule/template fallback. Budget guard caps daily calls.
     gemini_api_key: str | None = None
+    gemini_daily_budget: int = 200
 
     # Matchmaking weights (tunable later / via game_config). Default leans
     # "similarity with a little complementarity".
