@@ -50,7 +50,10 @@ IGNORE = ["*.pyc", "*__pycache__*", "*.venv*", "*node_modules*", "*.next*",
 
 
 def upload(api: HfApi, space: str, folder: Path, readme: str) -> None:
-    api.create_repo(space, repo_type="space", space_sdk="docker", exist_ok=True)
+    # HF now requires PRO to CREATE new Docker Spaces; ours already exist, so
+    # only create when missing (and surface a clear message if that fails).
+    if not api.repo_exists(space, repo_type="space"):
+        api.create_repo(space, repo_type="space", space_sdk="docker")
     api.upload_folder(repo_id=space, repo_type="space", folder_path=str(folder),
                       ignore_patterns=IGNORE, commit_message="deploy")
     with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False) as f:

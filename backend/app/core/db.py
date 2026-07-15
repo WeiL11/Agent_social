@@ -5,7 +5,10 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.config import settings
 
-engine = create_engine(settings.database_url, pool_pre_ping=True, future=True)
+# prepare_threshold=None disables psycopg named prepared statements — required
+# with Supavisor/PgBouncer transaction pooling (shared server conns collide).
+engine = create_engine(settings.database_url, pool_pre_ping=True, future=True,
+                       connect_args={"prepare_threshold": None})
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
 
 
