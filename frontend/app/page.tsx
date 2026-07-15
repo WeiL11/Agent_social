@@ -93,9 +93,15 @@ export default function Home() {
           <h3>用你的 AI 對話生成</h3>
           <p className="muted">內容會先去除個資，只保留性格分析結果，不儲存原文。</p>
           <textarea rows={8} value={text} onChange={(e) => setText(e.target.value)} placeholder={PLACEHOLDER} />
+          {text.trim().length > 0 && text.trim().length < 20 && (
+            <p className="err" style={{ margin: "6px 0 0" }}>
+              再多貼一點（至少 20 字，目前 {text.trim().length} 字）——越長分析越準
+            </p>
+          )}
           <div className="row" style={{ marginTop: 8 }}>
-            <button onClick={onCreateCharacter} disabled={busy || text.trim().length < 20}>
-              {busy ? "分析中…" : "分析並生成"}
+            <button onClick={onCreateCharacter} disabled={busy || text.trim().length < 20}
+              title={text.trim().length < 20 ? "至少貼 20 字的對話內容" : ""}>
+              {busy ? "分析中…" : text.trim().length < 20 ? `分析並生成（還差 ${20 - text.trim().length} 字）` : "分析並生成"}
             </button>
             <button className="ghost" onClick={() => setShowAdd(false)}>取消</button>
           </div>
