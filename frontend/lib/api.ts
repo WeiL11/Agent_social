@@ -6,8 +6,8 @@
 
 import type {
   Character, CharacterChat, CharacterChatSummary, CharacterFriendResult, Conversation,
-  DirectMessage, DispatchResult, Encounter, Friend, GenerateResult, Match, Me, Scenario,
-  SelfExtractProfile, ShareResult, SharedCharacter, WaveResult,
+  DirectMessage, DispatchResult, Encounter, Friend, GenerateResult, Match, Me, Mission,
+  Scenario, SelfExtractProfile, ShareResult, SharedCharacter, TalkMsg, TalkResult, WaveResult,
 } from "./types";
 
 import { authEnabled, getToken } from "./supabase";
@@ -81,6 +81,25 @@ export const extractFromText = (text: string, applyMode: "create_new" | "enrich_
     method: "POST",
     body: JSON.stringify({ text, apply_mode: applyMode, enrich_character_id: enrichCharacterId ?? null }),
   });
+
+// ---- missions: tell your sprite what to find ----
+export const createMission = (queryText: string, characterId?: string) =>
+  req<Mission>("/missions", {
+    method: "POST",
+    body: JSON.stringify({ query_text: queryText, character_id: characterId ?? null }),
+  });
+export const listMissions = () => req<Mission[]>("/missions");
+export const rerunMission = (id: string) => req<Mission>(`/missions/${id}/run`, { method: "POST" });
+export const archiveMission = (id: string) =>
+  req<{ archived: string }>(`/missions/${id}`, { method: "DELETE" });
+
+// ---- talk to your own sprite ----
+export const talkToSprite = (characterId: string, message: string) =>
+  req<TalkResult>(`/characters/${characterId}/talk`, {
+    method: "POST", body: JSON.stringify({ message }),
+  });
+export const talkHistory = (characterId: string) =>
+  req<TalkMsg[]>(`/characters/${characterId}/talk`);
 
 // ---- 邂逅 explore: sprite meets compatible strangers ----
 export const explore = (characterId: string) =>

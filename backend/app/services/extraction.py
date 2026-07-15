@@ -9,6 +9,7 @@ import re
 
 import httpx
 
+from app.core.constants import TOPIC_LEXICON
 from app.schemas.profile import SelfExtractProfileIn
 from app.services.deid import scrub
 
@@ -71,13 +72,19 @@ def rule_based_extract(text: str) -> SelfExtractProfileIn:
     if hits["analytical"] > 2:
         traits.append("analytical")
 
+    # Topics make the persona searchable by missions（愛跑步的小精靈簡介要有「跑步」）.
+    topics = [tag for tag, aliases in TOPIC_LEXICON.items()
+              if any(a.lower() in low for a in aliases)][:4]
+    topic_part = ("喜歡" + "、".join(topics) + "，") if topics else ""
+    trait_part = "、".join(traits) if traits else "好奇"
+
     total = sum(n for _, n in ranked[:2]) or 1
     facets = [{
         "facet": f,
         "weight": max(40, min(95, int(60 + 40 * (hits[f] / total)))),
         "radar": radar,
         "trait_tags": traits or ["curious"],
-        "summary": "從對話風格看，是個" + ("、".join(traits) if traits else "好奇") + "的人。",
+        "summary": f"{topic_part}是個{trait_part}的人。",
     } for f in top]
     return SelfExtractProfileIn.model_validate({"version": "1.0", "facets": facets})
 

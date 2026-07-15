@@ -20,6 +20,7 @@ from app.models.community import (
 from app.models.dispatch import Dispatch, Scenario
 from app.models.ingestion import Upload
 from app.models.message import Message
+from app.models.mission import Mission
 from app.models.social import (
     CharacterChat,
     CharacterFriendship,
@@ -27,6 +28,7 @@ from app.models.social import (
     Friendship,
     MatchWave,
 )
+from app.models.sprite_talk import SpriteTalk
 from app.models.user import User
 
 __all__ = [
@@ -60,4 +62,6 @@ __all__ = [
     "CharacterShare",
     "MatchWave",
     "Message",
+    "Mission",
+    "SpriteTalk",
 ]

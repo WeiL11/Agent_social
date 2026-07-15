@@ -13,10 +13,12 @@ from app.api import (
     routes_matches,
     routes_me,
     routes_messages,
+    routes_missions,
     routes_profiles,
     routes_render,
     routes_share,
     routes_social,
+    routes_talk,
 )
 from app.core.config import settings
 from app.core.db import engine
@@ -42,8 +44,10 @@ app.include_router(routes_render.router)
 app.include_router(routes_matches.router)
 app.include_router(routes_me.router)
 app.include_router(routes_messages.router)
+app.include_router(routes_missions.router)
 app.include_router(routes_social.router)
 app.include_router(routes_share.router)
+app.include_router(routes_talk.router)
 app.include_router(routes_admin.router)
 
 # Ops UI (sqladmin) mounted at /ops — password-gated.

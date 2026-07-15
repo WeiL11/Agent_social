@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   befriendCharacter, cardUrl, getCharacter, getCharacterChat, listCharacterChats,
-  listCharacterFriends, startCharacterChat, updateCharacter,
+  listCharacterFriends, startCharacterChat, talkHistory, talkToSprite, updateCharacter,
 } from "../../../lib/api";
-import type { Character, CharacterChat, CharacterChatSummary } from "../../../lib/types";
+import type { Character, CharacterChat, CharacterChatSummary, TalkMsg } from "../../../lib/types";
 
 export default function CharacterPage({ params }: { params: { id: string } }) {
   const id = params.id;
@@ -15,15 +15,38 @@ export default function CharacterPage({ params }: { params: { id: string } }) {
   const [openChat, setOpenChat] = useState<CharacterChat | null>(null);
   const [targetId, setTargetId] = useState("");
   const [err, setErr] = useState("");
+  const [talk, setTalk] = useState<TalkMsg[]>([]);
+  const [talkInput, setTalkInput] = useState("");
+  const [talkBusy, setTalkBusy] = useState(false);
+  const [talkNote, setTalkNote] = useState("");
+  const talkEnd = useRef<HTMLDivElement>(null);
 
   async function load() {
     try {
       setC(await getCharacter(id));
       setFriends(await listCharacterFriends(id));
       setChats(await listCharacterChats(id));
+      setTalk(await talkHistory(id));
     } catch (e: any) { setErr(e.message); }
   }
   useEffect(() => { load(); }, [id]);
+  useEffect(() => { talkEnd.current?.scrollIntoView({ block: "nearest" }); }, [talk]);
+
+  async function sendTalk() {
+    const message = talkInput.trim();
+    if (!message) return;
+    setTalkBusy(true); setTalkNote("");
+    setTalk((t) => [...t, { role: "user", text: message, created_at: "" }]);
+    setTalkInput("");
+    try {
+      const r = await talkToSprite(id, message);
+      setTalk((t) => [...t, r.reply]);
+      if (r.enriched) setTalkNote("✨ 這段對話讓牠的個性又豐富了一點（雷達有變化）");
+      else if (r.suggest_mission) setTalkNote("💡 牠可以幫你找——回首頁把需求交給牠當任務！");
+      load();
+    } catch (e: any) { setTalkNote(e.message); }
+    setTalkBusy(false);
+  }
 
   if (!c) return <main className="container"><p className="muted">{err || "載入中…"}</p></main>;
 
@@ -42,6 +65,25 @@ export default function CharacterPage({ params }: { params: { id: string } }) {
         <button className="ghost" onClick={async () => {
           const n = prompt("改名：", c.name ?? ""); if (n) { await updateCharacter(id, { name: n }); load(); }
         }}>改名</button>
+      </div>
+
+      {/* 跟小精靈聊天（豐富個性） */}
+      <div className="card">
+        <h3>跟{c.name}聊聊 💬</h3>
+        <p className="muted">聊得越多，牠越像你——對話會慢慢豐富牠的個性（雷達圖會變）。</p>
+        <div style={{ maxHeight: 260, overflowY: "auto", display: "flex", flexDirection: "column" }}>
+          {talk.map((m, i) => (
+            <div key={i} className={`bubble ${m.role === "user" ? "me" : "them"}`}>{m.text}</div>
+          ))}
+          <div ref={talkEnd} />
+        </div>
+        <div className="row" style={{ marginTop: 8 }}>
+          <input value={talkInput} onChange={(e) => setTalkInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && !talkBusy && sendTalk()}
+            placeholder={`跟 ${c.name} 說點什麼…`} />
+          <button onClick={sendTalk} disabled={talkBusy}>{talkBusy ? "…" : "送出"}</button>
+        </div>
+        {talkNote && <p className="muted">{talkNote}</p>}
       </div>
 
       {/* 角色好友 */}

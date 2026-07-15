@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { chooseHandle, clearHandle, getHandle, getMe, setHandle } from "../lib/api";
-import { authEnabled, getToken, signInWithGoogle, signOut } from "../lib/supabase";
+import { authEnabled, ensureSignedIn, getToken } from "../lib/supabase";
 
 function Overlay({ children }: { children: React.ReactNode }) {
   return (
@@ -13,10 +13,10 @@ function Overlay({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Real auth (Supabase Google) with handle onboarding; dev-handle fallback locally. */
+/** Guest-first: an anonymous session is created silently on first visit — the
+ * only thing we ask is a display name. Linking to Google lives in Settings. */
 export default function UserBar() {
   const [ready, setReady] = useState(false);
-  const [signedIn, setSignedIn] = useState(false);
   const [me, setMe] = useState<{ handle: string; placeholder: boolean } | null>(null);
   const [input, setInput] = useState("");
   const [err, setErr] = useState("");
@@ -30,12 +30,8 @@ export default function UserBar() {
 
   useEffect(() => {
     if (!authEnabled) { setReady(true); return; }
-    const sync = () => {
-      const t = Boolean(getToken());
-      setSignedIn(t);
-      setReady(true);
-      if (t) refreshMe();
-    };
+    ensureSignedIn(); // guest session, no wall
+    const sync = () => { setReady(true); if (getToken()) refreshMe(); };
     sync();
     window.addEventListener("auth-changed", sync);
     return () => window.removeEventListener("auth-changed", sync);
@@ -43,44 +39,28 @@ export default function UserBar() {
 
   if (!ready) return null;
 
-  // ---- production: Supabase Google auth ----
+  // ---- production (Supabase): silent guest; only ask for a name once ----
   if (authEnabled) {
-    if (!signedIn) {
-      return (
-        <Overlay>
-          <h2>🪄 AI Persona</h2>
-          <p className="muted">你的 AI 對話，會長成你的小精靈。</p>
-          <button style={{ width: "100%" }} onClick={() => signInWithGoogle()}>
-            使用 Google 登入
-          </button>
-        </Overlay>
-      );
-    }
     if (me?.placeholder) {
       return (
         <Overlay>
-          <h2>取個名字 ✨</h2>
-          <p className="muted">這是你在遊戲裡的公開暱稱（3–24 字，小寫英數、_ 或 -）</p>
+          <h2>幫自己取個名字 ✨</h2>
+          <p className="muted">別人會用這個名字認識你（3–24 字，小寫英數、_ 或 -）</p>
           <input value={input} placeholder="例如 weilee" onChange={(e) => setInput(e.target.value)} />
           {err && <p className="err">{err}</p>}
           <button style={{ marginTop: 10, width: "100%" }} disabled={!input.trim()}
             onClick={async () => {
               setErr("");
               try { await chooseHandle(input.trim()); await refreshMe(); }
-              catch (e: any) { setErr(e.message.includes("409") ? "這個暱稱已被使用" : e.message); }
-            }}>確定</button>
+              catch (e: any) { setErr(e.message.includes("409") ? "這個名字已被使用" : e.message); }
+            }}>開始</button>
         </Overlay>
       );
     }
-    return (
-      <span className="muted" style={{ cursor: "pointer" }} title="點擊登出"
-        onClick={async () => { await signOut(); location.reload(); }}>
-        @{me?.handle ?? "…"} ⎋
-      </span>
-    );
+    return <a href="/settings" className="muted">@{me?.handle ?? "…"}</a>;
   }
 
-  // ---- local dev fallback: pick-a-handle mode ----
+  // ---- local dev fallback: X-Dev-User handle mode ----
   const h = getHandle();
   if (!h) {
     return (

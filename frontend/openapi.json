@@ -1943,6 +1943,296 @@
         }
       }
     },
+    "/missions": {
+      "post": {
+        "tags": [
+          "missions"
+        ],
+        "summary": "Create Mission",
+        "operationId": "create_mission_missions_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-dev-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MissionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "missions"
+        ],
+        "summary": "List Missions",
+        "operationId": "list_missions_missions_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-dev-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MissionOut"
+                  },
+                  "title": "Response List Missions Missions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/missions/{mission_id}/run": {
+      "post": {
+        "tags": [
+          "missions"
+        ],
+        "summary": "Rerun Mission",
+        "operationId": "rerun_mission_missions__mission_id__run_post",
+        "parameters": [
+          {
+            "name": "mission_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Mission Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-dev-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/missions/{mission_id}": {
+      "delete": {
+        "tags": [
+          "missions"
+        ],
+        "summary": "Archive Mission",
+        "operationId": "archive_mission_missions__mission_id__delete",
+        "parameters": [
+          {
+            "name": "mission_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Mission Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-dev-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/friends/requests": {
       "post": {
         "tags": [
@@ -2535,6 +2825,168 @@
                     "$ref": "#/components/schemas/SharedCharacterOut"
                   },
                   "title": "Response Shared With Me Shared Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/characters/{character_id}/talk": {
+      "post": {
+        "tags": [
+          "sprite-talk"
+        ],
+        "summary": "Talk",
+        "operationId": "talk_characters__character_id__talk_post",
+        "parameters": [
+          {
+            "name": "character_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Character Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-dev-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TalkIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TalkResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "sprite-talk"
+        ],
+        "summary": "Talk History",
+        "operationId": "talk_history_characters__character_id__talk_get",
+        "parameters": [
+          {
+            "name": "character_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Character Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-dev-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dev-User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TalkMsg"
+                  },
+                  "title": "Response Talk History Characters  Character Id  Talk Get"
                 }
               }
             }
@@ -3676,6 +4128,184 @@
         ],
         "title": "MessageOut"
       },
+      "MissionCreate": {
+        "properties": {
+          "query_text": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 4,
+            "title": "Query Text"
+          },
+          "character_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Character Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query_text"
+        ],
+        "title": "MissionCreate"
+      },
+      "MissionOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "character_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Character Id"
+          },
+          "query_text": {
+            "type": "string",
+            "title": "Query Text"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "tags": {
+            "items": {},
+            "type": "array",
+            "title": "Tags"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "report": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Report"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MissionResultItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "engine": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Engine"
+          },
+          "runs_today": {
+            "type": "integer",
+            "title": "Runs Today"
+          },
+          "last_run_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Run At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "character_id",
+          "query_text",
+          "kind",
+          "tags",
+          "status",
+          "report",
+          "items",
+          "engine",
+          "runs_today",
+          "last_run_at",
+          "created_at"
+        ],
+        "title": "MissionOut"
+      },
+      "MissionResultItem": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "character_id": {
+            "type": "string",
+            "title": "Character Id"
+          },
+          "score": {
+            "type": "integer",
+            "title": "Score"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "matched_tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Matched Tags",
+            "default": []
+          },
+          "character": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CharacterOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "waved": {
+            "type": "boolean",
+            "title": "Waved",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "character_id",
+          "score",
+          "reasons"
+        ],
+        "title": "MissionResultItem"
+      },
       "ScenarioOut": {
         "properties": {
           "id": {
@@ -3881,6 +4511,67 @@
           "owner_handle"
         ],
         "title": "SharedCharacterOut"
+      },
+      "TalkIn": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "TalkIn"
+      },
+      "TalkMsg": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "text",
+          "created_at"
+        ],
+        "title": "TalkMsg"
+      },
+      "TalkResult": {
+        "properties": {
+          "reply": {
+            "$ref": "#/components/schemas/TalkMsg"
+          },
+          "suggest_mission": {
+            "type": "boolean",
+            "title": "Suggest Mission"
+          },
+          "enriched": {
+            "type": "boolean",
+            "title": "Enriched"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reply",
+          "suggest_mission",
+          "enriched"
+        ],
+        "title": "TalkResult"
       },
       "ValidationError": {
         "properties": {

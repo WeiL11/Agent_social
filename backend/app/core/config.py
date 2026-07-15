@@ -36,6 +36,15 @@ class Settings(BaseSettings):
     gemini_api_key: str | None = None
     gemini_daily_budget: int = 200
 
+    # Missions (sprite as purposeful social agent).
+    mission_active_cap: int = 5      # max active missions per user
+    mission_daily_runs: int = 3      # re-runs per mission per day
+    mission_result_limit: int = 10   # top-N results kept per run
+
+    # Talking to your own sprite.
+    sprite_talk_daily_limit: int = 30   # user messages per character per day
+    sprite_talk_enrich_every: int = 6   # user messages between personality enrichments
+
     # Matchmaking weights (tunable later / via game_config). Default leans
     # "similarity with a little complementarity".
     match_w_similarity: float = 0.50

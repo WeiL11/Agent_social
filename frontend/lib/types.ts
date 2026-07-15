@@ -91,6 +91,43 @@ export interface CharacterChatSummary {
   created_at: string;
 }
 
+export interface MissionResultItem {
+  type: "mutual_goal" | "sprite_match";
+  character_id: string;
+  score: number;
+  reasons: string[];
+  matched_tags: string[];
+  character: Character | null;
+  waved: boolean;
+}
+
+export interface Mission {
+  id: string;
+  character_id: string;
+  query_text: string;
+  kind: string;
+  tags: string[];
+  status: string;
+  report: string | null;
+  items: MissionResultItem[];
+  engine: string | null;
+  runs_today: number;
+  last_run_at: string | null;
+  created_at: string;
+}
+
+export interface TalkMsg {
+  role: "user" | "sprite";
+  text: string;
+  created_at: string;
+}
+
+export interface TalkResult {
+  reply: TalkMsg;
+  suggest_mission: boolean;
+  enriched: boolean;
+}
+
 export interface Encounter {
   chat_id: string;
   my_character: Character;

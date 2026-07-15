@@ -19,6 +19,7 @@ from app.models.user import User
 from app.schemas.character import CharacterOut, GenerateResult
 from app.schemas.profile import GenerateProfileRequest
 from app.services.deid import scrub
+from app.services.enrichment import apply_enrich
 from app.services.extraction import extract_profile
 from app.services.facets import rank_facets
 from app.services.generation import generate_character_fields
@@ -76,12 +77,7 @@ def create_profile(
         char = db.get(Character, body.enrich_character_id)
         if char is None or char.owner_id != user.id:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "character not found")
-        fields = generate_character_fields(ranked[0], axis_ids, settings.llm_provider)
-        merged = dict(char.radar or {})
-        for axis, val in fields["radar"].items():  # average toward the new signal
-            merged[axis] = int(((merged.get(axis, val)) + val) / 2)
-        char.radar = merged
-        char.trait_tags = sorted(set((char.trait_tags or []) + fields["trait_tags"]))
+        apply_enrich(char, ranked[0], axis_ids, settings.llm_provider)
         _store_profile(db, user, body.source, ranked[0])
         db.commit()
         db.refresh(char)

@@ -55,6 +55,43 @@ TRAIT_WHITELIST: set[str] = {
 VALID_FACETS: set[str] = set(FACET_TO_ARCHETYPE.keys())
 MAX_FACETS = 4
 
+# Topic lexicon: canonical tag -> aliases. Used by mission parsing/matching AND
+# extraction (so a runner's sprite persona actually says 跑步 and is findable).
+# Growing this list = better matching, zero code change elsewhere.
+TOPIC_LEXICON: dict[str, list[str]] = {
+    "跑步": ["跑步", "慢跑", "路跑", "晨跑", "夜跑", "馬拉松", "跑者", "跑友", "練跑",
+           "配速", "running", "jog", "marathon"],
+    "健身": ["健身", "重訓", "gym", "workout", "fitness", "肌力", "深蹲"],
+    "登山": ["登山", "爬山", "健行", "hiking", "百岳", "野營"],
+    "自行車": ["自行車", "單車", "騎車", "cycling", "bike"],
+    "游泳": ["游泳", "swim"],
+    "球類": ["籃球", "羽球", "網球", "排球", "桌球", "basketball", "badminton", "tennis"],
+    "瑜珈": ["瑜珈", "yoga", "冥想", "meditation", "皮拉提斯"],
+    "程式": ["程式", "寫code", "coding", "python", "javascript", "typescript",
+           "後端", "前端", "工程師", "developer", "debug"],
+    "ai": ["ai", "claude", "chatgpt", "gpt", "gemini", "llm", "prompt", "機器學習", "深度學習"],
+    "ui設計": ["ui", "ux", "介面", "設計稿", "figma", "design", "設計"],
+    "寫作": ["寫作", "寫文", "部落格", "小說", "writing", "blog", "文案", "寫詩", "詩"],
+    "繪畫": ["畫畫", "繪畫", "插畫", "素描", "drawing", "illustration"],
+    "音樂": ["音樂", "吉他", "鋼琴", "唱歌", "樂團", "music", "guitar", "piano"],
+    "攝影": ["攝影", "拍照", "photography", "相機"],
+    "遊戲": ["遊戲", "電玩", "game", "gaming", "桌遊", "boardgame"],
+    "旅行": ["旅行", "旅遊", "出國", "travel", "backpack", "露營", "camping"],
+    "咖啡": ["咖啡", "coffee", "手沖", "咖啡廳"],
+    "美食": ["美食", "料理", "烹飪", "cooking", "烘焙", "baking", "煮飯", "做菜"],
+    "語言": ["日文", "英文", "韓文", "語言交換", "japanese", "english", "korean"],
+    "投資": ["投資", "股票", "理財", "invest", "stock", "crypto"],
+    "閱讀": ["閱讀", "讀書", "書友", "reading", "書會"],
+    "寵物": ["寵物", "貓", "狗", "pet"],
+    "創業": ["創業", "副業", "startup", "side project", "產品"],
+}
+
+# Generic words that must not become fallback tags.
+TOPIC_STOPWORDS: set[str] = {
+    "一起", "想找", "夥伴", "同好", "朋友", "幫我", "我想", "最近", "開始", "有沒",
+    "沒有", "大家", "可以", "希望", "喜歡", "想要", "的人", "找人", "什麼", "怎麼",
+}
+
 # Human-readable facet labels (for matchmaking reasons, etc.)
 FACET_LABELS: dict[str, str] = {
     "coding": "程式",
